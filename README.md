@@ -20,6 +20,15 @@ it has few examples of how to build the app and in this case how to build websoc
 * `/chat` ChatView. It's chat view where will connect to the Websocket view and list all messages incoming from all users.
 * `/ws` WebsocketView. It's the interface where clients will connect to the chat.
 
+# Extra
+
+I created a 2 example scripts to explain how works pub sub redis and example how to
+publish messages to any channel, in our case, over __ALL__ channel send some random jsons
+
+* `test_pub_sub`: It's an implementation how works pub sub into a script
+* `test_send_messages`: Send 5 messages with sleep into __ALL__ channel to simulate
+that other node sends messages and communicates.
+
 # Author
 
 Ángel Berhó(Bergran)
