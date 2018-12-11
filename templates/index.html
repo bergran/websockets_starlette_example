@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+        }
+        .container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .input {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        .column-form {
+            flex-direction: column;
+        }
+        form {
+            width: 400px;
+            height: 400px;
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form action="chat" class="column-form">
+            <div class="input column-form">
+                <label for="user">Username</label>
+                <input type="text" name="user" id="user"/>
+            </div>
+            <input type="submit" value="send"/>
+        </form>
+    </div>
+</body>
+</html>

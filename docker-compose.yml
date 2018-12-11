@@ -1,0 +1,23 @@
+version: '3'
+services:
+  app:
+    image: python:3.6.6-jessie
+    ports:
+      - 8000:8000
+    container_name: app_websocket
+    env_file: .env
+    working_dir: /code
+    volumes:
+        - .:/code
+    command: sh -c "pip install -r requirements.txt && python app.py"
+    depends_on:
+      - redis
+    restart: unless-stopped
+  redis:
+      image: redis:3.2.11
+      container_name: app_redis
+      env_file:
+        - .env
+      restart: unless-stopped
+volumes:
+  db_volume:

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chat</title>
+    </head>
+    <style>
+        body {
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        .messages {
+            width: 100%;
+            height: 350px;
+            background: antiquewhite;
+            overflow: hidden;
+            overflow-y: auto;
+            padding: 20px;
+            box-sizing: border-box;
+            margin-bottom: 5px;
+            list-style: none;
+            border-radius: 5px;
+        }
+
+        .messageText {
+            width: 100%;
+            height: 50px;
+            padding: 5px;
+            box-sizing: border-box;
+            margin-bottom: 5px;
+        }
+
+        .error {
+            color: #F00;
+        }
+
+        .notify, .error {
+            font-weight: 600;
+        }
+    </style>
+    <body>
+        <h1>WebSocket Chat</h1>
+        <ul class="messages" id='messages'>
+        </ul>
+        <form action="" onsubmit="sendMessage(event)">
+            <input type="text" class="messageText" id="messageText" autocomplete="off"/>
+            <button>Send</button>
+        </form>
+        <script>
+            var ws = new WebSocket("{{url}}");
+            let messages = document.getElementById('messages');
+            const reader = new FileReader();
+
+            const CONNECTED_USER = 'connected_user';
+            const RECEIVE_MESSAGE = 'receive_message';
+            const DISCONNECTED_USER = 'disconnected_user';
+            const ERROR = 'error';
+
+            function on_receive_message(data) {
+                let message = document.createElement('li');
+                message.className = 'message';
+                message.appendChild(document.createTextNode(`${data.user}: ${data.message}`));
+                messages.appendChild(message);
+            }
+
+            function on_connected_user(data) {
+                let message = document.createElement('li');
+                message.className = 'notify';
+                message.appendChild(document.createTextNode(`${data.user}: connected`));
+                messages.appendChild(message);
+            }
+
+            function on_disconnected_user(data) {
+                let message = document.createElement('li');
+                message.className = 'notify';
+                message.appendChild(document.createTextNode(`${data.user}: disconnected`));
+                messages.appendChild(message);
+            }
+
+            function on_error_message(data) {
+                let message = document.createElement('li');
+                message.className = 'error';
+                message.appendChild(document.createTextNode(`${data.error}`));
+                messages.appendChild(message);
+            }
+
+            function on_unknow_message(data) {
+
+            }
+
+            reader.addEventListener('loadend', (e) => {
+                const data = JSON.parse(e.srcElement.result);
+                var isScrolledToBottom = messages.scrollHeight - messages.clientHeight <= messages.scrollTop;
+
+                switch(data.type) {
+                    case RECEIVE_MESSAGE:
+                        on_receive_message(data);
+                        break;
+                    case CONNECTED_USER:
+                        on_connected_user(data);
+                        break;
+                    case DISCONNECTED_USER:
+                        on_disconnected_user(data);
+                        break;
+                    case ERROR:
+                        on_error_message(data);
+                        break;
+                    default:
+                        on_unknow_message(data);
+                        break;
+                }
+                if(isScrolledToBottom) {
+                    messages.scrollTop = messages.scrollHeight - messages.clientHeight;
+                }
+            });
+
+            ws.onmessage = function(event) {
+                reader.readAsText(event.data);
+            };
+
+            function sendMessage(event) {
+                var input = document.getElementById("messageText")
+                ws.send(JSON.stringify({message: input.value}));
+                input.value = '';
+                event.preventDefault()
+            }
+        </script>
+    </body>
+</html>
